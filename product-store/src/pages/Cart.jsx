@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Dashboard = () => {
+const Cart = () => {
     return <div>
         Cart Page
     </div>
 }
 
-export default Dashboard;
+export default Cart;
