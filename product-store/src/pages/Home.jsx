@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchProducts } from "../services/productApi";
+import ProductCard from "../components/home/ProductCard";
+
 
 function Home() {
   const { data, isLoading, isError } = useQuery({
@@ -11,9 +13,9 @@ function Home() {
   if (isError) return <p>Error loading products</p>;
 
   return (
-    <div>
+    <div style={{ display: "flex", flexWrap: "wrap" }}>
       {data.map((product) => (
-        <p key={product.id}>{product.title}</p>
+        <ProductCard key={product.id} product={product} />
       ))}
     </div>
   );
