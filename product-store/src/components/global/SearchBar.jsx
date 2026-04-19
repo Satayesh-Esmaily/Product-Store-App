@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
+import { useContext } from "react";
+import { SettingsContext } from "../../context/SettingsContext";
 
 function SearchBar({ onSearch }) {
   const [input, setInput] = useState("");
+  const { state } = useContext(SettingsContext);
+  const isDark = state.theme === "dark";
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -12,18 +16,24 @@ function SearchBar({ onSearch }) {
   }, [input, onSearch]);
 
   return (
-    <div style={{ marginBottom: "20px" }}>
+    <div className="mb-8">
+      <label
+        className={`mb-2 block text-sm font-medium tracking-wide ${
+          isDark ? "text-slate-400" : "text-slate-500"
+        }`}
+      >
+        Search Product
+      </label>
       <input
         type="text"
         placeholder="Search products..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        style={{
-          padding: "10px",
-          width: "300px",
-          border: "1px solid #ccc",
-          borderRadius: "6px",
-        }}
+        className={`w-full max-w-xl rounded-2xl border px-5 py-3 text-sm outline-none transition sm:text-base ${
+          isDark
+            ? "border-white/10 bg-white/5 text-slate-100 placeholder:text-slate-500 focus:border-blue-300/80 focus:ring-2 focus:ring-blue-200/30"
+            : "border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+        }`}
       />
     </div>
   );

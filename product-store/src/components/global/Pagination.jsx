@@ -1,44 +1,56 @@
+import { useContext } from "react";
+import { SettingsContext } from "../../context/SettingsContext";
+
 function Pagination({ page, setPage, totalPages, search }) {
-  if (search) return null; 
+  const { state } = useContext(SettingsContext);
+  const isDark = state.theme === "dark";
+  if (search) return null;
 
   return (
-    <div style={{ marginTop: "30px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
-      
-      {/* Prev */}
+    <div className="mt-10 flex flex-wrap items-center gap-2">
       <button
         disabled={page === 1}
         onClick={() => setPage((p) => p - 1)}
+        className={`rounded-xl px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40 ${
+          isDark
+            ? "border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10"
+            : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+        }`}
       >
         Prev
       </button>
 
-      {/* Pages */}
       {Array.from({ length: totalPages }, (_, i) => i + 1)
         .slice(Math.max(0, page - 3), page + 2)
         .map((p) => (
           <button
             key={p}
             onClick={() => setPage(p)}
-            style={{
-              padding: "5px 10px",
-              background: p === page ? "#333" : "#eee",
-              color: p === page ? "#fff" : "#000",
-              fontWeight: p === page ? "bold" : "normal",
-              borderRadius: "4px",
-            }}
+            className={`min-w-10 rounded-xl px-3 py-2 text-sm font-semibold transition ${
+              p === page
+                ? isDark
+                  ? "bg-blue-300 text-blue-950"
+                  : "bg-slate-900 text-blue-100"
+                : isDark
+                ? "border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
+                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+            }`}
           >
             {p}
           </button>
         ))}
 
-      {/* Next */}
       <button
         disabled={page === totalPages}
         onClick={() => setPage((p) => p + 1)}
+        className={`rounded-xl px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40 ${
+          isDark
+            ? "border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10"
+            : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+        }`}
       >
         Next
       </button>
-
     </div>
   );
 }
