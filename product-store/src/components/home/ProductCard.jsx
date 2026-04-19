@@ -7,8 +7,9 @@ function ProductCard({ product }) {
 
   return (
     <div style={{ border: "1px solid #ddd", padding: "10px", margin: "10px" }}>
+
       <img
-        src={product.image}
+        src={product.images?.[0]}
         alt={product.title}
         style={{ width: "100px", height: "100px", objectFit: "contain" }}
       />
@@ -22,8 +23,9 @@ function ProductCard({ product }) {
       </button>
 
       <Link to={`/product/${product.id}`}>
-       <h3>{product.title}</h3>
+        View Details
       </Link>
+
     </div>
   );
 }
