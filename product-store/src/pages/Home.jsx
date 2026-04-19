@@ -8,11 +8,11 @@ import {
 import { searchProducts } from "../services/productApi";
 import SearchBar from "../components/global/SearchBar";
 import ProductCard from "../components/home/ProductCard";
+import Pagination from "../components/global/Pagination";
 
 function Home() {
   const [category, setCategory] = useState("all");
   const [page, setPage] = useState(1);
-  
 
   const limit = 12;
 
@@ -45,14 +45,13 @@ function Home() {
     (cat, index, self) =>
       index === self.findIndex((c) => c.slug === cat.slug)
   );
-
+  const totalPages = data ? Math.ceil(data.total / limit) : 1;
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error loading products</p>;
 
   return (
     <div>
-   
       <SearchBar onSearch={setSearch} />
       {/*  Categories */}
       <div style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
@@ -86,18 +85,12 @@ function Home() {
       </div>
 
       {/* Pagination */}
-      <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
-        <button onClick={() => setPage((p) => Math.max(p - 1, 1))}>
-          Prev
-        </button>
-
-        <span>Page {page}</span>
-
-        <button onClick={() => setPage((p) => p + 1)}>
-          Next
-        </button>
-      </div>
-
+      <Pagination
+        page={page}
+        setPage={setPage}
+        totalPages={totalPages}
+        search={search}
+      />
     </div>
   );
 }
