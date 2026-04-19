@@ -37,12 +37,19 @@ function Cart() {
                 isDark ? "border-white/10 bg-white/5" : "border-slate-200 bg-white"
               }`}
             >
-              <div>
+              <div className="flex items-center gap-4">
+                 <img
+                  src={item.images?.[0]}
+                  alt={item.title}
+                  className="h-16 w-16 object-contain rounded"
+                 />
                 <h2 className="font-semibold">{item.title}</h2>
                 <p className="mt-1 text-sm text-slate-500">${item.price}</p>
               </div>
 
               <div className="flex items-center gap-2">
+
+
                 <button
                   onClick={() => dispatch(decreaseQuantity(item.id))}
                   className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
