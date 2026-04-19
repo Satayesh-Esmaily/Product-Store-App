@@ -37,3 +37,8 @@ export const fetchProductsByCategory = async (category, limit = 12, skip = 0) =>
   );
   return res.data;
 };
+
+export const searchProducts = async (query) => {
+  const res = await api.get(`/products/search?q=${query}`);
+  return res.data;
+};

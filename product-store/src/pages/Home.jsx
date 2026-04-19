@@ -5,15 +5,35 @@ import {
   fetchCategories,
   fetchProductsByCategory,
 } from "../services/productApi";
-
+import { searchProducts } from "../services/productApi";
+import SearchBar from "../components/global/SearchBar";
 import ProductCard from "../components/home/ProductCard";
 
 function Home() {
   const [category, setCategory] = useState("all");
   const [page, setPage] = useState(1);
+  
 
   const limit = 12;
 
+  const [search, setSearch] = useState("");
+
+  const { data, isLoading, isError } = useQuery({
+   queryKey: ["products", category, page, search],
+   queryFn: () => {
+     const skip = (page - 1) * limit;
+
+     if (search) {
+       return searchProducts(search);
+     }
+
+     if (category === "all") {
+      return fetchProducts(limit, skip);
+     }
+
+     return fetchProductsByCategory(category, limit, skip);
+   },
+  });
   // Categories
   const { data: categories } = useQuery({
     queryKey: ["categories"],
@@ -26,30 +46,14 @@ function Home() {
       index === self.findIndex((c) => c.slug === cat.slug)
   );
 
-  // Products
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["products", category, page],
-    queryFn: () => {
-      const skip = (page - 1) * limit;
-
-      if (category === "all") {
-        return fetchProducts(limit, skip);
-      }
-
-      return fetchProductsByCategory(category, limit, skip);
-    },
-  });
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error loading products</p>;
 
   return (
     <div>
-
+   
+      <SearchBar onSearch={setSearch} />
       {/*  Categories */}
       <div style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
         <button
