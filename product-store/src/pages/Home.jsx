@@ -87,18 +87,17 @@ function Home() {
               isDark ? "text-blue-300/80" : "text-blue-600/80"
             }`}
           >
-            Curated Collection
+            Product Store
           </p>
           <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight sm:text-5xl">
-            Clean Design, Smooth Shopping
+            Discover Products You’ll Love
           </h1>
           <p
             className={`mt-4 max-w-2xl text-sm sm:text-base ${
               isDark ? "text-slate-300/85" : "text-slate-600"
             }`}
           >
-            Apple-inspired minimal UI with calm colors, soft surfaces, and
-            better readability.
+            Browse a wide collection of categories, compare prices, and add your favorite products to cart with a smooth shopping experience.
           </p>
         </div>
       </section>
