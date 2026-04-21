@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { SettingsContext } from "../../context/settingsContext";
 import Toast from "../global/Toast";
 
-function ProductCard({ product }) {
+function ProductCard({ product, view = "grid" }) {
   const dispatch = useDispatch();
   const { state } = useContext(SettingsContext);
   const isDark = state.theme === "dark";
@@ -31,7 +31,11 @@ function ProductCard({ product }) {
       <Toast message={toastMessage} isDark={isDark} />
 
       <article
-        className={`group flex h-full flex-col justify-between rounded-3xl border p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl ${
+        className={`group flex rounded-3xl border p-4 shadow-sm transition duration-300 hover:shadow-xl ${
+          view === "list"
+            ? "flex-row items-center gap-4"
+            : "h-full flex-col justify-between hover:-translate-y-1"
+        } ${
           isDark
             ? "border-white/10 bg-white/[0.03]"
             : "border-slate-200 bg-white/95"
@@ -40,10 +44,12 @@ function ProductCard({ product }) {
         <img
           src={product.images?.[0]}
           alt={product.title}
-          className="h-44 w-full rounded-2xl bg-white object-contain p-4"
+          className={`rounded-2xl bg-white object-contain p-4 ${
+            view === "list" ? "h-28 w-28 shrink-0" : "h-44 w-full"
+          }`}
         />
 
-        <div className="mt-4 space-y-2">
+        <div className={`${view === "list" ? "flex-1" : "mt-4"} space-y-2`}>
           <p
             className={`text-xs uppercase tracking-[0.2em] ${
               isDark ? "text-slate-500" : "text-slate-500"
@@ -56,11 +62,11 @@ function ProductCard({ product }) {
           </h3>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className={`${view === "list" ? "" : "mt-4"} flex items-center justify-between`}>
           <p className="text-xl font-bold">${product.price}</p>
         </div>
 
-        <div className="mt-5 flex items-center gap-2">
+        <div className={`${view === "list" ? "ml-auto" : "mt-5"} flex items-center gap-2`}>
           <button
             onClick={handleAddToCart}
             className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${

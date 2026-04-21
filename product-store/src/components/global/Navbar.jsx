@@ -54,6 +54,57 @@ function Navbar() {
             Cart ({totalItems})
           </Link>
 
+          <div
+            className={`hidden items-center gap-1 rounded-full p-1 md:flex ${
+              isDark ? "bg-white/5" : "bg-slate-100"
+            }`}
+          >
+            <button
+              onClick={() => dispatch({ type: "SET_VIEW_MODE", payload: "grid" })}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                state.viewMode === "grid"
+                  ? isDark
+                    ? "bg-blue-300 text-blue-950"
+                    : "bg-slate-900 text-blue-100"
+                  : isDark
+                  ? "text-slate-300 hover:bg-white/10"
+                  : "text-slate-700 hover:bg-white"
+              }`}
+            >
+              Grid
+            </button>
+            <button
+              onClick={() => dispatch({ type: "SET_VIEW_MODE", payload: "list" })}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                state.viewMode === "list"
+                  ? isDark
+                    ? "bg-blue-300 text-blue-950"
+                    : "bg-slate-900 text-blue-100"
+                  : isDark
+                  ? "text-slate-300 hover:bg-white/10"
+                  : "text-slate-700 hover:bg-white"
+              }`}
+            >
+              List
+            </button>
+          </div>
+
+          <button
+            onClick={() =>
+              dispatch({
+                type: "SET_FEED_MODE",
+                payload: state.feedMode === "pagination" ? "infinite" : "pagination",
+              })
+            }
+            className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-wide transition sm:text-sm ${
+              isDark
+                ? "border border-white/10 text-slate-200 hover:bg-white/10"
+                : "border border-slate-200 text-slate-700 hover:bg-slate-100"
+            }`}
+          >
+            {state.feedMode === "pagination" ? "Infinite" : "Pagination"}
+          </button>
+
           <button
             onClick={() => dispatch({ type: "TOGGLE_THEME" })}
             className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wide transition sm:text-sm ${
