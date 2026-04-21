@@ -1,19 +1,18 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useContext } from "react";
 import { SettingsContext } from "../../context/SettingsContext";
 
-function SearchBar({ onSearch }) {
-  const [input, setInput] = useState("");
+function SearchBar({ onSearch, value, onChange }) {
   const { state } = useContext(SettingsContext);
   const isDark = state.theme === "dark";
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      onSearch(input);
+      onSearch(value);
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [input, onSearch]);
+  }, [value, onSearch]);
 
   return (
     <div className="mb-8">
@@ -27,8 +26,8 @@ function SearchBar({ onSearch }) {
       <input
         type="text"
         placeholder="Search products..."
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         className={`w-full max-w-xl rounded-2xl border px-5 py-3 text-sm outline-none transition sm:text-base ${
           isDark
             ? "border-white/10 bg-white/5 text-slate-100 placeholder:text-slate-500 focus:border-blue-300/80 focus:ring-2 focus:ring-blue-200/30"
