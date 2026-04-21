@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { useSelector } from "react-redux";
-import { SettingsContext } from "../../context/SettingsContext";
+import { SettingsContext } from "../../context/settingsContext";
 
 function Navbar() {
   const { state, dispatch } = useContext(SettingsContext);
@@ -71,3 +71,4 @@ function Navbar() {
 }
 
 export default Navbar;
+

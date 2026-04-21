@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   fetchProducts,
@@ -8,9 +8,10 @@ import {
 } from "../services/productApi";
 import SearchBar from "../components/global/SearchBar";
 import ProductCard from "../components/home/ProductCard";
+import Filters from "../components/home/Filters";
 import Pagination from "../components/global/Pagination";
 import Loading from "../components/global/Loading";
-import { SettingsContext } from "../context/SettingsContext";
+import { SettingsContext } from "../context/settingsContext";
 
 function Home() {
   const [category, setCategory] = useState("all");
@@ -22,6 +23,10 @@ function Home() {
 
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const [sortBy, setSortBy] = useState("default");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [minRating, setMinRating] = useState("");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["products", category, page, search],
@@ -51,10 +56,45 @@ function Home() {
   );
 
   const totalPages = data ? Math.ceil(data.total / limit) : 1;
-  const products = data?.products || [];
+  const products = useMemo(() => data?.products ?? [], [data?.products]);
+  const hasAdvancedFilters = minPrice || maxPrice || minRating || sortBy !== "default";
+
+  const visibleProducts = useMemo(() => {
+    let nextProducts = [...products];
+
+    const minPriceValue = minPrice ? Number(minPrice) : null;
+    const maxPriceValue = maxPrice ? Number(maxPrice) : null;
+    const minRatingValue = minRating ? Number(minRating) : null;
+
+    nextProducts = nextProducts.filter((product) => {
+      if (minPriceValue !== null && product.price < minPriceValue) return false;
+      if (maxPriceValue !== null && product.price > maxPriceValue) return false;
+      if (minRatingValue !== null && (product.rating ?? 0) < minRatingValue) return false;
+      return true;
+    });
+
+    switch (sortBy) {
+      case "price-asc":
+        nextProducts.sort((a, b) => a.price - b.price);
+        break;
+      case "price-desc":
+        nextProducts.sort((a, b) => b.price - a.price);
+        break;
+      case "rating-desc":
+        nextProducts.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+        break;
+      case "title-asc":
+        nextProducts.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      default:
+        break;
+    }
+
+    return nextProducts;
+  }, [products, minPrice, maxPrice, minRating, sortBy]);
 
   if (isLoading) {
-    return <Loading />;
+    return <Loading variant="productsGrid" />;
   }
 
   if (isError) {
@@ -101,9 +141,30 @@ function Home() {
       </section>
 
       <SearchBar
-        onSearch={setSearch}
+        onSearch={(value) => {
+          setSearch(value);
+          setPage(1);
+        }}
         value={searchInput}
         onChange={setSearchInput}
+      />
+
+      <Filters
+        isDark={isDark}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        minPrice={minPrice}
+        setMinPrice={setMinPrice}
+        maxPrice={maxPrice}
+        setMaxPrice={setMaxPrice}
+        minRating={minRating}
+        setMinRating={setMinRating}
+        onClear={() => {
+          setSortBy("default");
+          setMinPrice("");
+          setMaxPrice("");
+          setMinRating("");
+        }}
       />
 
       <div className="flex flex-wrap gap-2">
@@ -148,12 +209,12 @@ function Home() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {products.map((product) => (
+        {visibleProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
-      {products.length === 0 && (
+      {visibleProducts.length === 0 && (
         <div
           className={`rounded-3xl border p-8 text-center ${
             isDark
@@ -161,7 +222,9 @@ function Home() {
               : "border-slate-200 bg-white text-slate-600"
           }`}
         >
-          No products found for this search.
+          {hasAdvancedFilters
+            ? "No products match your filters."
+            : "No products found for this search."}
         </div>
       )}
 
@@ -176,3 +239,4 @@ function Home() {
 }
 
 export default Home;
+

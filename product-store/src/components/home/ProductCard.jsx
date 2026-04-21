@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../../store/cartSlice";
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { SettingsContext } from "../../context/SettingsContext";
+import { SettingsContext } from "../../context/settingsContext";
 import Toast from "../global/Toast";
 
 function ProductCard({ product }) {
@@ -89,3 +89,4 @@ function ProductCard({ product }) {
 }
 
 export default ProductCard;
+
