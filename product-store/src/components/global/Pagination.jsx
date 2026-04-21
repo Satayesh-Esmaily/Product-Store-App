@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SettingsContext } from "../../context/SettingsContext";
+import { SettingsContext } from "../../context/settingsContext";
 
 function Pagination({ page, setPage, totalPages, search }) {
   const { state } = useContext(SettingsContext);
@@ -56,3 +56,4 @@ function Pagination({ page, setPage, totalPages, search }) {
 }
 
 export default Pagination;
+

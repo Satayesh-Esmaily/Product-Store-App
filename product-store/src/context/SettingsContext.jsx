@@ -1,9 +1,10 @@
-import { createContext, useReducer } from "react";
-
-export const SettingsContext = createContext();
+import { useReducer } from "react";
+import { SettingsContext } from "./settingsContext";
 
 const initialState = {
   theme: "light",
+  viewMode: "grid",
+  feedMode: "pagination",
 };
 
 function settingsReducer(state, action) {
@@ -13,7 +14,16 @@ function settingsReducer(state, action) {
         ...state,
         theme: state.theme === "light" ? "dark" : "light",
       };
-
+    case "SET_VIEW_MODE":
+      return {
+        ...state,
+        viewMode: action.payload === "list" ? "list" : "grid",
+      };
+    case "SET_FEED_MODE":
+      return {
+        ...state,
+        feedMode: action.payload === "infinite" ? "infinite" : "pagination",
+      };
     default:
       return state;
   }

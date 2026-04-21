@@ -1,5 +1,5 @@
-import { useState, useContext } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useContext, useMemo, useEffect, useRef } from "react";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import {
   fetchProducts,
   fetchCategories,
@@ -10,7 +10,7 @@ import SearchBar from "../components/global/SearchBar";
 import ProductCard from "../components/home/ProductCard";
 import Pagination from "../components/global/Pagination";
 import Loading from "../components/global/Loading";
-import { SettingsContext } from "../context/SettingsContext";
+import { SettingsContext } from "../context/settingsContext";
 
 function Home() {
   const [category, setCategory] = useState("all");
@@ -19,14 +19,38 @@ function Home() {
   const isDark = state.theme === "dark";
 
   const limit = 12;
+  const isInfiniteMode = state.feedMode === "infinite";
 
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const loadMoreRef = useRef(null);
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["products", category, page, search],
-    queryFn: () => {
-      const skip = (page - 1) * limit;
+  const { data: paginatedData, isLoading: isPaginationLoading, isError: isPaginationError } =
+    useQuery({
+      queryKey: ["products", category, page, search],
+      enabled: !isInfiniteMode,
+      queryFn: () => {
+        const skip = (page - 1) * limit;
+
+        if (search) return searchProducts(search);
+        if (category === "all") return fetchProducts(limit, skip);
+        return fetchProductsByCategory(category, limit, skip);
+      },
+    });
+
+  const {
+    data: infiniteData,
+    isLoading: isInfiniteLoading,
+    isError: isInfiniteError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["products-infinite", category, search],
+    enabled: isInfiniteMode,
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }) => {
+      const skip = pageParam * limit;
 
       if (search) {
         return searchProducts(search);
@@ -38,7 +62,37 @@ function Home() {
 
       return fetchProductsByCategory(category, limit, skip);
     },
+    getNextPageParam: (lastPage, allPages) => {
+      if (search) return undefined;
+
+      const loadedCount = allPages.reduce(
+        (total, currentPage) => total + (currentPage.products?.length || 0),
+        0
+      );
+
+      if (loadedCount >= (lastPage.total || 0)) return undefined;
+      return allPages.length;
+    },
   });
+
+  useEffect(() => {
+    if (!isInfiniteMode || !loadMoreRef.current || !hasNextPage || isFetchingNextPage) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: "120px" }
+    );
+
+    observer.observe(loadMoreRef.current);
+
+    return () => observer.disconnect();
+  }, [isInfiniteMode, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
@@ -46,18 +100,24 @@ function Home() {
   });
 
   const uniqueCategories = categories?.filter(
-    (cat, index, self) =>
-      index === self.findIndex((c) => c.slug === cat.slug)
+    (cat, index, self) => index === self.findIndex((c) => c.slug === cat.slug)
   );
 
-  const totalPages = data ? Math.ceil(data.total / limit) : 1;
-  const products = data?.products || [];
+  const products = useMemo(() => {
+    if (!isInfiniteMode) {
+      return paginatedData?.products || [];
+    }
 
-  if (isLoading) {
+    return (infiniteData?.pages || []).flatMap((singlePage) => singlePage.products || []);
+  }, [isInfiniteMode, paginatedData?.products, infiniteData?.pages]);
+
+  const totalPages = paginatedData ? Math.ceil(paginatedData.total / limit) : 1;
+
+  if ((!isInfiniteMode && isPaginationLoading) || (isInfiniteMode && isInfiniteLoading)) {
     return <Loading />;
   }
 
-  if (isError) {
+  if ((!isInfiniteMode && isPaginationError) || (isInfiniteMode && isInfiniteError)) {
     return (
       <div className="rounded-3xl border border-rose-300/70 bg-rose-50 p-10 text-center text-rose-600">
         Error loading products
@@ -101,7 +161,10 @@ function Home() {
       </section>
 
       <SearchBar
-        onSearch={setSearch}
+        onSearch={(value) => {
+          setSearch(value);
+          setPage(1);
+        }}
         value={searchInput}
         onChange={setSearchInput}
       />
@@ -147,9 +210,15 @@ function Home() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div
+        className={
+          state.viewMode === "list"
+            ? "grid grid-cols-1 gap-4"
+            : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        }
+      >
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} view={state.viewMode} />
         ))}
       </div>
 
@@ -165,14 +234,26 @@ function Home() {
         </div>
       )}
 
-      <Pagination
-        page={page}
-        setPage={setPage}
-        totalPages={totalPages}
-        search={search}
-      />
+      {!isInfiniteMode ? (
+        <Pagination page={page} setPage={setPage} totalPages={totalPages} search={search} />
+      ) : (
+        <div className="space-y-3">
+          {isFetchingNextPage && (
+            <div className={`text-center text-sm ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+              Loading more products...
+            </div>
+          )}
+          {!search && hasNextPage && <div ref={loadMoreRef} className="h-4" />}
+          {!search && !hasNextPage && products.length > 0 && (
+            <div className={`text-center text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+              You reached the end.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
 export default Home;
+

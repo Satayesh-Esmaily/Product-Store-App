@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SettingsContext } from "../../context/SettingsContext";
+import { SettingsContext } from "../../context/settingsContext";
 
 function Loading({ message = "Loading products..." }) {
   const { state } = useContext(SettingsContext);
@@ -19,3 +19,4 @@ function Loading({ message = "Loading products..." }) {
 }
 
 export default Loading;
+

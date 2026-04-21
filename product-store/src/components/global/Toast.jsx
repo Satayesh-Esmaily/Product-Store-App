@@ -18,3 +18,4 @@ function Toast({ message, isDark = false }) {
 }
 
 export default Toast;
+
