@@ -1,10 +1,7 @@
-import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Cart from "./pages/Cart";
-import Navbar from "./components/global/Navbar";
 import { useContext } from "react";
+import Navbar from "./components/global/Navbar";
+import AppRouter from "./router/AppRouter";
 import { SettingsContext } from "./context/settingsContext";
-import ProductDetails from "./pages/ProductDetails";
 
 function App() {
   const { state } = useContext(SettingsContext);
@@ -20,15 +17,10 @@ function App() {
     >
       <Navbar />
       <main className="w-full px-4 pb-12 pt-8 sm:px-6 lg:px-8">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
-        </Routes>
+        <AppRouter />
       </main>
     </div>
   );
 }
 
 export default App;
-

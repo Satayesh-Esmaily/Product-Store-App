@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useContext, useMemo, useState } from "react";
 import { fetchProductById } from "../services/productApi";
 import { SettingsContext } from "../context/settingsContext";
-import Loading from "../components/global/Loading"; // ✅ اضافه شد
+import Loading from "../components/global/Loading";
 
 const submitReviewMock = async (review) => {
   await new Promise((resolve) => setTimeout(resolve, 500));
@@ -12,7 +12,6 @@ const submitReviewMock = async (review) => {
     date: new Date().toISOString(),
   };
 };
-
 
 const loadStoredReviews = () => {
   try {
@@ -29,8 +28,6 @@ function ProductDetails() {
   const isDark = state.theme === "dark";
 
   const [localReviewsByProduct, setLocalReviewsByProduct] = useState(loadStoredReviews);
-
-
   const [form, setForm] = useState({
     reviewerName: "",
     rating: "5",
@@ -82,7 +79,10 @@ function ProductDetails() {
     });
   };
 
-  const localReviews = localReviewsByProduct[id] || [];
+  const localReviews = useMemo(
+    () => localReviewsByProduct[id] || [],
+    [localReviewsByProduct, id]
+  );
 
   const allReviews = useMemo(
     () => [...localReviews, ...(data?.reviews || [])],
@@ -100,18 +100,6 @@ function ProductDetails() {
       </div>
     );
   }
-
-if (isLoading) {
-  return <Loading variant="productDetails" />;
-}
-
-if (isError) {
-  return (
-    <div className="rounded-3xl border border-rose-300/70 bg-rose-50 p-10 text-center text-rose-600">
-      Error loading product
-    </div>
-  );
-}
 
   return (
     <div className="space-y-8">
@@ -243,4 +231,3 @@ if (isError) {
 }
 
 export default ProductDetails;
-
