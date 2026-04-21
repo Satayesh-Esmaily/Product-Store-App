@@ -1,4 +1,4 @@
-import { useState, useContext, useMemo, useEffect, useRef } from "react";
+import { useState, useContext, useMemo, useEffect, useRef, useCallback } from "react";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import {
   fetchProducts,
@@ -24,6 +24,8 @@ function Home() {
 
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [hasAdvancedFilters, setHasAdvancedFilters] = useState(false);
   const loadMoreRef = useRef(null);
 
   const { data: paginatedData, isLoading: isPaginationLoading, isError: isPaginationError } =
@@ -53,14 +55,8 @@ function Home() {
     queryFn: async ({ pageParam }) => {
       const skip = pageParam * limit;
 
-      if (search) {
-        return searchProducts(search);
-      }
-
-      if (category === "all") {
-        return fetchProducts(limit, skip);
-      }
-
+      if (search) return searchProducts(search);
+      if (category === "all") return fetchProducts(limit, skip);
       return fetchProductsByCategory(category, limit, skip);
     },
     getNextPageParam: (lastPage, allPages) => {
@@ -111,11 +107,17 @@ function Home() {
 
     return (infiniteData?.pages || []).flatMap((singlePage) => singlePage.products || []);
   }, [isInfiniteMode, paginatedData?.products, infiniteData?.pages]);
+  const handleFilteredChange = useCallback(({ products: nextProducts, hasAdvancedFilters: hasFilters }) => {
+    setFilteredProducts(nextProducts);
+    setHasAdvancedFilters(hasFilters);
+  }, []);
+  const displayProducts =
+    hasAdvancedFilters || filteredProducts.length > 0 ? filteredProducts : products;
 
   const totalPages = paginatedData ? Math.ceil(paginatedData.total / limit) : 1;
 
   if ((!isInfiniteMode && isPaginationLoading) || (isInfiniteMode && isInfiniteLoading)) {
-    return <Loading />;
+    return <Loading variant="productsGrid" />;
   }
 
   if ((!isInfiniteMode && isPaginationError) || (isInfiniteMode && isInfiniteError)) {
@@ -149,14 +151,15 @@ function Home() {
             Product Store
           </p>
           <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight sm:text-5xl">
-            Discover Products You’ll Love
+            Discover Products You'll Love
           </h1>
           <p
             className={`mt-4 max-w-2xl text-sm sm:text-base ${
               isDark ? "text-slate-300/85" : "text-slate-600"
             }`}
           >
-            Browse a wide collection of categories, compare prices, and add your favorite products to cart with a smooth shopping experience.
+            Browse categories, compare prices, and add your favorites with a smooth shopping
+            experience.
           </p>
         </div>
       </section>
@@ -169,23 +172,10 @@ function Home() {
         value={searchInput}
         onChange={setSearchInput}
       />
-
       <Filters
         isDark={isDark}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        minPrice={minPrice}
-        setMinPrice={setMinPrice}
-        maxPrice={maxPrice}
-        setMaxPrice={setMaxPrice}
-        minRating={minRating}
-        setMinRating={setMinRating}
-        onClear={() => {
-          setSortBy("default");
-          setMinPrice("");
-          setMaxPrice("");
-          setMinRating("");
-        }}
+        products={products}
+        onFilteredChange={handleFilteredChange}
       />
 
       <div className="flex flex-wrap gap-2">
@@ -236,12 +226,12 @@ function Home() {
             : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         }
       >
-        {products.map((product) => (
+        {displayProducts.map((product) => (
           <ProductCard key={product.id} product={product} view={state.viewMode} />
         ))}
       </div>
 
-      {visibleProducts.length === 0 && (
+      {displayProducts.length === 0 && (
         <div
           className={`rounded-3xl border p-8 text-center ${
             isDark
@@ -265,7 +255,7 @@ function Home() {
             </div>
           )}
           {!search && hasNextPage && <div ref={loadMoreRef} className="h-4" />}
-          {!search && !hasNextPage && products.length > 0 && (
+          {!search && !hasNextPage && displayProducts.length > 0 && (
             <div className={`text-center text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
               You reached the end.
             </div>
@@ -277,4 +267,3 @@ function Home() {
 }
 
 export default Home;
-

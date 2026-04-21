@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useContext, useMemo, useState } from "react";
 import { fetchProductById } from "../services/productApi";
 import { SettingsContext } from "../context/settingsContext";
+import Loading from "../components/global/Loading"; // ✅ اضافه شد
 
 const submitReviewMock = async (review) => {
   await new Promise((resolve) => setTimeout(resolve, 500));
@@ -12,18 +13,24 @@ const submitReviewMock = async (review) => {
   };
 };
 
+
+const loadStoredReviews = () => {
+  try {
+    const stored = localStorage.getItem("reviews");
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+};
+
 function ProductDetails() {
   const { id } = useParams();
   const { state } = useContext(SettingsContext);
   const isDark = state.theme === "dark";
-  const [localReviewsByProduct, setLocalReviewsByProduct] = useState(loadStoredReviews);
-  const [form, setForm] = useState({
-    reviewerName: "",
-    rating: "5",
-    comment: "",
-  });
 
-  const [localReviews, setLocalReviews] = useState([]);
+  const [localReviewsByProduct, setLocalReviewsByProduct] = useState(loadStoredReviews);
+
+
   const [form, setForm] = useState({
     reviewerName: "",
     rating: "5",
@@ -38,13 +45,23 @@ function ProductDetails() {
   const addReviewMutation = useMutation({
     mutationFn: submitReviewMock,
     onSuccess: (newReview) => {
-      setLocalReviews((prev) => [newReview, ...prev]);
+      setLocalReviewsByProduct((prev) => {
+        const updated = {
+          ...prev,
+          [id]: [newReview, ...(prev[id] || [])],
+        };
+
+        localStorage.setItem("reviews", JSON.stringify(updated));
+        return updated;
+      });
+
       setForm({ reviewerName: "", rating: "5", comment: "" });
     },
   });
 
   const handleSubmitReview = (event) => {
     event.preventDefault();
+
     const reviewerName = form.reviewerName.trim();
     const comment = form.comment.trim();
 
@@ -65,6 +82,8 @@ function ProductDetails() {
     });
   };
 
+  const localReviews = localReviewsByProduct[id] || [];
+
   const allReviews = useMemo(
     () => [...localReviews, ...(data?.reviews || [])],
     [localReviews, data?.reviews]
@@ -81,6 +100,18 @@ function ProductDetails() {
       </div>
     );
   }
+
+if (isLoading) {
+  return <Loading variant="productDetails" />;
+}
+
+if (isError) {
+  return (
+    <div className="rounded-3xl border border-rose-300/70 bg-rose-50 p-10 text-center text-rose-600">
+      Error loading product
+    </div>
+  );
+}
 
   return (
     <div className="space-y-8">

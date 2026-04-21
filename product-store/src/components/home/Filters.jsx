@@ -1,15 +1,54 @@
-function Filters({
-  isDark,
-  sortBy,
-  setSortBy,
-  minPrice,
-  setMinPrice,
-  maxPrice,
-  setMaxPrice,
-  minRating,
-  setMinRating,
-  onClear,
-}) {
+import { useEffect, useMemo, useState } from "react";
+
+function Filters({ isDark, products, onFilteredChange }) {
+  const [sortBy, setSortBy] = useState("default");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [minRating, setMinRating] = useState("");
+
+  const hasAdvancedFilters = minPrice || maxPrice || minRating || sortBy !== "default";
+
+  const visibleProducts = useMemo(() => {
+    let nextProducts = [...products];
+
+    const minPriceValue = minPrice ? Number(minPrice) : null;
+    const maxPriceValue = maxPrice ? Number(maxPrice) : null;
+    const minRatingValue = minRating ? Number(minRating) : null;
+
+    nextProducts = nextProducts.filter((product) => {
+      if (minPriceValue !== null && product.price < minPriceValue) return false;
+      if (maxPriceValue !== null && product.price > maxPriceValue) return false;
+      if (minRatingValue !== null && (product.rating ?? 0) < minRatingValue) return false;
+      return true;
+    });
+
+    switch (sortBy) {
+      case "price-asc":
+        nextProducts.sort((a, b) => a.price - b.price);
+        break;
+      case "price-desc":
+        nextProducts.sort((a, b) => b.price - a.price);
+        break;
+      case "rating-desc":
+        nextProducts.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+        break;
+      case "title-asc":
+        nextProducts.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      default:
+        break;
+    }
+
+    return nextProducts;
+  }, [products, minPrice, maxPrice, minRating, sortBy]);
+
+  useEffect(() => {
+    onFilteredChange({
+      products: visibleProducts,
+      hasAdvancedFilters,
+    });
+  }, [visibleProducts, hasAdvancedFilters, onFilteredChange]);
+
   return (
     <section
       className={`rounded-2xl border p-4 sm:p-5 ${
@@ -76,7 +115,12 @@ function Filters({
         </select>
 
         <button
-          onClick={onClear}
+          onClick={() => {
+            setSortBy("default");
+            setMinPrice("");
+            setMaxPrice("");
+            setMinRating("");
+          }}
           className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
             isDark
               ? "border border-white/10 text-slate-200 hover:bg-white/10"
