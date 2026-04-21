@@ -4,11 +4,12 @@ import {
   fetchProducts,
   fetchCategories,
   fetchProductsByCategory,
+  searchProducts,
 } from "../services/productApi";
-import { searchProducts } from "../services/productApi";
 import SearchBar from "../components/global/SearchBar";
 import ProductCard from "../components/home/ProductCard";
 import Pagination from "../components/global/Pagination";
+import Loading from "../components/global/Loading";
 import { SettingsContext } from "../context/SettingsContext";
 
 function Home() {
@@ -20,6 +21,7 @@ function Home() {
   const limit = 12;
 
   const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["products", category, page, search],
@@ -52,11 +54,7 @@ function Home() {
   const products = data?.products || [];
 
   if (isLoading) {
-    return (
-      <div className="rounded-3xl border border-slate-200 bg-white/90 p-10 text-center text-slate-600 shadow-sm">
-        Loading products...
-      </div>
-    );
+    return <Loading />;
   }
 
   if (isError) {
@@ -102,7 +100,11 @@ function Home() {
         </div>
       </section>
 
-      <SearchBar onSearch={setSearch} />
+      <SearchBar
+        onSearch={setSearch}
+        value={searchInput}
+        onChange={setSearchInput}
+      />
 
       <div className="flex flex-wrap gap-2">
         <button
