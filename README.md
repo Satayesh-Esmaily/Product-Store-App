@@ -73,10 +73,10 @@ This project uses **DummyJSON Products API**:
 
 
 ## How to run:
-# 1) Install dependencies
-npm install
-# 2) Navigating to project folder
+# 1) Navigating to project folder
 cd product-store
+# 2) Install dependencies
+npm install
 # 3) Run the Project
 npm run dev
 
