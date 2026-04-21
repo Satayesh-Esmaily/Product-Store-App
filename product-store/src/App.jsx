@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Navbar from "./components/global/Navbar";
 import { useContext } from "react";
-import { SettingsContext } from "./context/SettingsContext";
+import { SettingsContext } from "./context/settingsContext";
 import ProductDetails from "./pages/ProductDetails";
 
 function App() {
@@ -31,3 +31,4 @@ function App() {
 }
 
 export default App;
+

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useContext } from "react";
-import { SettingsContext } from "../../context/SettingsContext";
+import { SettingsContext } from "../../context/settingsContext";
 
 function SearchBar({ onSearch, value, onChange }) {
   const { state } = useContext(SettingsContext);
@@ -39,3 +39,4 @@ function SearchBar({ onSearch, value, onChange }) {
 }
 
 export default SearchBar;
+

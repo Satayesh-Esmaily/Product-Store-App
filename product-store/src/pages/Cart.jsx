@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useContext } from "react";
 import { removeFromCart, increaseQuantity, decreaseQuantity } from "../store/cartSlice";
-import { SettingsContext } from "../context/SettingsContext";
+import { SettingsContext } from "../context/settingsContext";
 
 function Cart() {
   const { items } = useSelector((state) => state.cart);
@@ -95,3 +95,4 @@ function Cart() {
 }
 
 export default Cart;
+

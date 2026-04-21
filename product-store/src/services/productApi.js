@@ -10,15 +10,6 @@ export const fetchProducts = async (limit = 12, skip = 0) => {
   return res.data;
 };
 
-
-export const fetchBeautyProducts = async (limit = 12, skip = 0) => {
-  const res = await api.get(
-    `/products/category/beauty?limit=${limit}&skip=${skip}`
-  );
-  return res.data;
-};
-
-
 export const fetchProductById = async (id) => {
   const res = await api.get(`/products/${id}`);
   return res.data;
