@@ -8,6 +8,7 @@ import {
 } from "../services/productApi";
 import SearchBar from "../components/global/SearchBar";
 import ProductCard from "../components/home/ProductCard";
+import Filters from "../components/home/Filters";
 import Pagination from "../components/global/Pagination";
 import Loading from "../components/global/Loading";
 import { SettingsContext } from "../context/settingsContext";
@@ -169,6 +170,24 @@ function Home() {
         onChange={setSearchInput}
       />
 
+      <Filters
+        isDark={isDark}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        minPrice={minPrice}
+        setMinPrice={setMinPrice}
+        maxPrice={maxPrice}
+        setMaxPrice={setMaxPrice}
+        minRating={minRating}
+        setMinRating={setMinRating}
+        onClear={() => {
+          setSortBy("default");
+          setMinPrice("");
+          setMaxPrice("");
+          setMinRating("");
+        }}
+      />
+
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => {
@@ -222,7 +241,7 @@ function Home() {
         ))}
       </div>
 
-      {products.length === 0 && (
+      {visibleProducts.length === 0 && (
         <div
           className={`rounded-3xl border p-8 text-center ${
             isDark
@@ -230,7 +249,9 @@ function Home() {
               : "border-slate-200 bg-white text-slate-600"
           }`}
         >
-          No products found for this search.
+          {hasAdvancedFilters
+            ? "No products match your filters."
+            : "No products found for this search."}
         </div>
       )}
 

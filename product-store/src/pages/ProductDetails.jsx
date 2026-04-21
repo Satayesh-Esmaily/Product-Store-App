@@ -16,6 +16,12 @@ function ProductDetails() {
   const { id } = useParams();
   const { state } = useContext(SettingsContext);
   const isDark = state.theme === "dark";
+  const [localReviewsByProduct, setLocalReviewsByProduct] = useState(loadStoredReviews);
+  const [form, setForm] = useState({
+    reviewerName: "",
+    rating: "5",
+    comment: "",
+  });
 
   const [localReviews, setLocalReviews] = useState([]);
   const [form, setForm] = useState({
@@ -65,11 +71,7 @@ function ProductDetails() {
   );
 
   if (isLoading) {
-    return (
-      <div className="rounded-3xl border border-slate-200/80 bg-white/80 p-10 text-center text-slate-600 shadow-sm">
-        Loading product...
-      </div>
-    );
+    return <Loading variant="productDetails" />;
   }
 
   if (isError) {
