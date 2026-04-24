@@ -78,8 +78,14 @@
 <img width="1920" height="1029" alt="image" src="https://github.com/user-attachments/assets/3fd56cb5-dd26-4160-a44a-25330a39cc55" />
 
 ## Mobile View
+## Home Page
+<img width="324" height="709" alt="image" src="https://github.com/user-attachments/assets/b75ee75b-37d6-424c-b29b-5075263f16a9" />
 
+## Cart Page
+<img width="333" height="702" alt="image" src="https://github.com/user-attachments/assets/4cb6c755-ae93-40e1-a10d-869714c8e1b5" />
 
+## Product Detail
+<img width="315" height="692" alt="image" src="https://github.com/user-attachments/assets/44d2641a-0d6e-4f26-9dcf-f613c2b9224f" />
 
 
 
