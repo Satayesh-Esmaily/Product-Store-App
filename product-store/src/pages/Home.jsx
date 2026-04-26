@@ -1,5 +1,5 @@
 import { useState, useContext, useMemo, useEffect, useRef, useCallback } from "react";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
 import {
   fetchProducts,
   fetchCategories,
@@ -29,11 +29,16 @@ function Home() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [hasAdvancedFilters, setHasAdvancedFilters] = useState(false);
   const loadMoreRef = useRef(null);
+  const handleSearch = useCallback((value) => {
+    setSearch(value);
+    setPage(1);
+  }, []);
 
   const { data: paginatedData, isLoading: isPaginationLoading, isError: isPaginationError } =
     useQuery({
       queryKey: ["products", category, page, search],
       enabled: !isInfiniteMode,
+      placeholderData: keepPreviousData,
       queryFn: () => {
         const skip = (page - 1) * limit;
 
@@ -137,10 +142,7 @@ function Home() {
       <HomeHero isDark={isDark} />
 
       <SearchBar
-        onSearch={(value) => {
-          setSearch(value);
-          setPage(1);
-        }}
+        onSearch={handleSearch}
         value={searchInput}
         onChange={setSearchInput}
       />

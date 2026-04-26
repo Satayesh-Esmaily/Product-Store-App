@@ -1,12 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useContext } from "react";
 import { SettingsContext } from "../../context/settingsContext";
 
 function SearchBar({ onSearch, value, onChange }) {
   const { state } = useContext(SettingsContext);
   const isDark = state.theme === "dark";
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return undefined;
+    }
+
     const timeout = setTimeout(() => {
       onSearch(value);
     }, 500);

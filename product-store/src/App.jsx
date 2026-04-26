@@ -16,7 +16,7 @@ function App() {
       }`}
     >
       <Navbar />
-      <main className="w-full px-4 pb-12 pt-8 sm:px-6 lg:px-8">
+      <main className="w-full px-4 pb-12 pt-6 sm:px-6 md:pl-72 md:pr-8 lg:pr-10">
         <AppRouter />
       </main>
     </div>
