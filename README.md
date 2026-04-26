@@ -5,6 +5,10 @@
       - Redux Toolkit
       - React Query
 
+      
+# Demo Video Link:
+       https://youtu.be/0dzvvd2IlTs?si=0F3MRGqtCuhswcgd
+
 ## Features
 
 ### Context API + useReducer
@@ -65,27 +69,33 @@
 
 ## Screenshots 
 ## Home Page 
-<img width="1920" height="1021" alt="image" src="https://github.com/user-attachments/assets/2e4172ab-209a-48d7-b857-969f1f044057" />
+<img width="1920" height="1026" alt="image" src="https://github.com/user-attachments/assets/8a997f44-b053-4ae1-938c-ab10d805e544" />
+
 
 ## Cart Page
-<img width="1920" height="1022" alt="image" src="https://github.com/user-attachments/assets/e443f3ab-bae1-4141-a099-9c2037d33377" />
+<img width="1920" height="1023" alt="image" src="https://github.com/user-attachments/assets/615fa12b-9b8b-4551-8cdc-999295028212" />
+
 
 ## Product Detail
-<img width="1920" height="1010" alt="image" src="https://github.com/user-attachments/assets/d96db381-c556-4899-8c3c-6e167873f393" />
+<img width="1920" height="1021" alt="image" src="https://github.com/user-attachments/assets/a03b5291-704c-4056-93e6-437fbc16b91a" />
 
-## Dark Mode
-<img width="1918" height="1025" alt="image" src="https://github.com/user-attachments/assets/3cab4c2a-390c-47c5-9299-ccd9d6f9bf2b" />
-<img width="1920" height="1029" alt="image" src="https://github.com/user-attachments/assets/3fd56cb5-dd26-4160-a44a-25330a39cc55" />
+
+## Light Mode
+<img width="1920" height="1010" alt="image" src="https://github.com/user-attachments/assets/d86beb7f-c1ab-48cf-9223-ff5fdf1580a7" />
+
 
 ## Mobile View
 ## Home Page
-<img width="324" height="709" alt="image" src="https://github.com/user-attachments/assets/b75ee75b-37d6-424c-b29b-5075263f16a9" />
+<img width="317" height="717" alt="image" src="https://github.com/user-attachments/assets/0b00f697-eeda-44fd-a223-48cb081017ba" />
+
 
 ## Cart Page
-<img width="333" height="702" alt="image" src="https://github.com/user-attachments/assets/4cb6c755-ae93-40e1-a10d-869714c8e1b5" />
+<img width="316" height="702" alt="image" src="https://github.com/user-attachments/assets/4d471d97-a624-43c6-8017-eace9a463da3" />
+
 
 ## Product Detail
-<img width="315" height="692" alt="image" src="https://github.com/user-attachments/assets/44d2641a-0d6e-4f26-9dcf-f613c2b9224f" />
+<img width="321" height="699" alt="image" src="https://github.com/user-attachments/assets/01b94a1d-e793-42c9-8ef5-729eae45430f" />
+
 
 
 
